@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #parent{
+            background: #E3FCFF;;height: 300px;position:relative;
+        }
+        #son{
+            background: #E3FCFF;;
+            width:20px;
+            height:30px;
+            position: absolute;top: 0;bottom: 0;left: 0;right: 0;margin:auto;
+        }
+        #parent{
+            background: #E3FCFF;;
+            width:1000px;
+            height:300px;
+            display:table;overflow:hidden;
+
+        }
+        #son{
+            background: #E3FCFF;;
+            vertical-align:middle;display:table-cell;
+        }
+        #parent{
+            background: #E3FCFF;
+            height:100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #son{
+            background: #E3FCFF;
+        }
+        .container-image{
+            position: relative;
+            display: flex;
+            height: 500px;
+            justify-content: center;
+            align-items:center;
+        }
+        .container-image img{
+            position: absolute;
+            display: block;
+            margin:auto;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+        .tab{
+            text-align: center;
+        }
+        .tab span{
+            display: inline-block;
+            width:10px;
+            height:10px;
+            background: #000;
+            -webkit-border-radius:5px;
+            -moz-border-radius:5px;
+            border-radius:5px;
+        }
+        .container{
+            position: relative;
+            width:500px;
+            height: 330px;
+            overflow: hidden;
+        }
+        .carousel-image{
+            position: absolute;
+            width:3000px;
+        }
+    </style>
+</head>
+<body>
+<div >
+    <div class="">
+        <div class="container-image">
+            <img class="banner-img" src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3721486562,2041162213&fm=27&gp=0.jpg" >
+            <img class="banner-img" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3120106583,1182308954&fm=27&gp=0.jpg" >
+            <img class="banner-img" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3377153203,4138457011&fm=26&gp=0.jpg" >
+            <!--<img class="banner-img" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2018040178,138482694&fm=26&gp=0.jpg" >-->
+        </div>
+
+        <div class="tab">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <div class="container">   <!--  无缝轮播-->
+        <div class="carousel-image" style="left: -500px;">
+            <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=339056085,2254279736&fm=27&gp=0.jpg" class="image">
+            <img src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1465757463,2243826297&fm=27&gp=0.jpg" class="image">
+            <img src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=836142732,2789906085&fm=27&gp=0.jpg" class="image">
+            <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=339056085,2254279736&fm=27&gp=0.jpg" class="image">
+            <img src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1465757463,2243826297&fm=27&gp=0.jpg" class="image">
+
+        </div>
+        <div style="position: absolute;top: 150px;width: 500px;display: flex;justify-content: space-between;color: white">
+            <span id="pre">pre</span>
+            <span id="next">next</span>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    let pre = document.getElementById("pre");
+    let next = document.getElementById("next");
+    let carouselImage = document.getElementsByClassName("carousel-image");
+    console.log(carouselImage[0].style.left)   //注意了：.style.left只能获取有内联样式的标签的left，否则为空。.offsetLeft才可以获取标签的left
+    //向右滑动
+    next.onclick = function () {
+        animate(-500);
+    }
+    pre.onclick = function () {
+        animate(500);
+    }
+    //移动函数
+    function animate(offset){    //为什么第二次go()函数调用时，offset为NaN
+        var leftDistance = parseInt(carouselImage[0].style.left) + offset;
+        var newoffset = offset;
+        var speed = newoffset/20;   //注意：如果这行代码放在go()函数里面，go()第二次执行的时候newoffset为NaN,导致定时器失效。应该是涉及到了作用域链的知识点。  每一步移动的距离  speed>0是向右
+        //动画函数
+        function go(newoffset){
+            currentLeft = carouselImage[0].style.left;   //当前图片的位置
+            if(speed > 0 && leftDistance > parseInt(currentLeft) || speed < 0 && leftDistance < parseInt(currentLeft)){
+                carouselImage[0].style.left =  parseInt(currentLeft) + speed + "px";
+                setTimeout(go,10);
+            }else if(leftDistance < -1500){
+                carouselImage[0].style.left = -500 + "px";
+            }else if(leftDistance > -500){
+                carouselImage[0].style.left = -1500 + "px";
+
+            }
+        }
+        go(newoffset);
+    }
+
+
+
+    /*
+     *   轮播图  轮播图的淡入淡出效果可以通过给样式添加transition：opacity:2s;2s代表时间
+     * */
+    $(".tab span").css("background","red");
+    //获取各个节点
+    let imageList = document.getElementsByClassName("banner-img");
+    imageList[0].style.opacity = 1;
+    let tabList = document.getElementsByClassName("tab")[0].getElementsByTagName("span");
+    let number = 0;
+    for(let i = 0;i < tabList.length; i++){
+        tabList[i].index = i;
+        tabList[i].onclick = function () {
+            //遍历所有的img元素，opacity设置为0，点击的俄元素设置为1
+            clearInterval(timeId);
+            for(let j = 0;j < tabList.length;j++){
+                imageList[tabList[j].index].style.opacity = 0;
+            }
+            number = tabList[i].index;
+            imageList[tabList[i].index].style.opacity = 1;
+            timeId = setInterval(Time,3000);
+        }
+    }
+    function Time() {
+        number++;
+        if(number < 3){
+            for(let j = 0;j < tabList.length;j++){
+                imageList[tabList[j].index].style.opacity = 0;
+            }
+            imageList[number].style.opacity = 1;
+        }else{
+            number = 0;
+            for(let j = 0;j < tabList.length;j++){
+                imageList[tabList[j].index].style.opacity = 0;
+            }
+            imageList[number].style.opacity = 1;
+        }
+    }
+    clearInterval(timeId);  //在调用定时器要先清除定时器，不然会让定时器一直叠加，使得轮播速度越来越快
+    var timeId = setInterval(Time,3000);
+
+
+
+</script>
+</body>
+</html>
